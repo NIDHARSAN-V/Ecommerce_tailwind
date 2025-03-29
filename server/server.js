@@ -3,6 +3,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const auth_router = require('./Routes/Auth/AuthRoute');
+const Admin_Product_Router = require('./Routes/Admin/ProductsRoutes');
 
 // Connect to MongoDB using the URI stored in the .env file
 mongoose
@@ -15,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: "http://localhost:5173",  // Frontend URL (update if necessary)
+    origin: "http://localhost:5173",  
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
       "Content-Type",
@@ -28,7 +30,18 @@ app.use(
   })
 );
 
+
+
 app.use(cookieParser());
 app.use(express.json());
+
+
+
+
+app.use('/api/auth' , auth_router);
+app.use('/api/admin/products' , Admin_Product_Router);
+
+
+
 
 app.listen(PORT, () => console.log(`Server is now running on port ${PORT}`));

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import AuthLayout from "./Components/Auth/layout";
 import Authlogin from "./Screens/Auth/login";
@@ -15,22 +15,39 @@ import ShoppingListing from "./Screens/Shopping-view/Listing";
 import ShoppingCheckout from "./Screens/Shopping-view/Checkout";
 import ShoppingAccount from "./Screens/Shopping-view/Account";
 import CheckAuth from "./Components/Common/CheckAuth";
+import { useDispatch, useSelector } from "react-redux";
+import { checkAuth } from "./Store/AuthSlice";
+
 
 function App() {
-  const isAuthenticated = true;  // Simulate authentication status
-  const user = {
-    name:"Nidhrasan",
-    role  :'admin'
-  };  // Simulate user data
+  
+   const {isAuthenticated , user , isLoading} = useSelector(state => state.auth)
+
+
+
+  const dispatch = useDispatch()
+
+  
+useEffect(function()
+{
+    dispatch(checkAuth());
+},[dispatch])
+ 
+
+
+if(isLoading)
+{
+  return <div>Loading ......</div>
+}
 
   return (
-    <div className="flex flex-col overflow-hidden bg-white">
+    <div className="flex flex-col overflow-hidden bg-blue">
       <Routes>
         {/* ✅ Auth Routes (Login/Register) */}
         <Route
           path="/auth"
           element={
-            <CheckAuth isAuthenticated={!isAuthenticated} user={user}>
+            <CheckAuth isAuthenticated={isAuthenticated} user={user}>
               <AuthLayout />
             </CheckAuth>
           }
@@ -38,6 +55,11 @@ function App() {
           <Route path="login" element={<Authlogin />} />
           <Route path="register" element={<Authregister />} />
         </Route>
+
+
+
+
+
 
         {/* ✅ Admin Routes (Protected) */}
         <Route
@@ -51,14 +73,22 @@ function App() {
           <Route path="dashboard" element={<AdminDashBoard />} />
           <Route path="feature" element={<AdminFeatures />} />
           <Route path="orders" element={<AdminOrders />} />
-          <Route path="product" element={<AdminProducts />} />
+          <Route path="products" element={<AdminProducts />} />
+
         </Route>
+
+
+
+
+
 
         {/* ✅ Shopping Routes (Publicly Accessible) */}
         <Route
           path="/shop"
           element={
+            <CheckAuth isAuthenticated={isAuthenticated} user={user}>
             <ShoppingViewLayout />
+            </CheckAuth>
           }
         >
           <Route path="home" element={<ShoppingHome />} />
