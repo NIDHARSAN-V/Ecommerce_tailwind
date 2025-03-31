@@ -39,6 +39,21 @@ console.log("In LoginUser Auth Slicer")
 
 
 
+export const logoutUser = createAsyncThunk("/auth/logout" , 
+    async function()
+    {
+        console.log("In Login Auth Slice")
+       const response = await axios.get('http://localhost:8000/api/auth/logout',
+       {
+       withCredentials:true,
+       })
+console.log("In LogOut Auth Slicer")
+       console.log(response.data)
+       return response.data
+    }
+)
+
+
 
 
 export const checkAuth = createAsyncThunk("/auth/checkauth" , 
@@ -128,6 +143,13 @@ const authSlice = createSlice({
                     state.user = null;
                     state.isAuthenticated = false;
                   })
+
+                  .addCase(logoutUser.fulfilled , (state,action)=>
+                {
+                state.isLoading = false
+                state.user=null;
+                state.isAuthenticated = false
+                })
 
 
 

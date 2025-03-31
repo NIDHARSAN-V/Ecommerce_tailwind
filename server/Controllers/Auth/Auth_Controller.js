@@ -81,7 +81,8 @@ const loginUser = async function(req,res)
         const token = jwt.sign({
             id : checkUser._id,
             role:checkUser.role,
-            email:checkUser.email
+            email:checkUser.email,
+            username : checkUser.userName
         } , 'CLIENT_SEC_KEY' , {expiresIn : '1d'})
 
 

@@ -6,7 +6,7 @@ const auth_router = express.Router();
 
 auth_router.post("/register", registerUser);
 auth_router.post("/login",loginUser );
-auth_router.post("/logout"  , logoutUser);
+auth_router.get("/logout"  , logoutUser);
 auth_router.get('/check-auth' , authMiddleware , function(req,res)
 {
     const user = req.user;

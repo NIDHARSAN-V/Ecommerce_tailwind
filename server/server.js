@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const auth_router = require('./Routes/Auth/AuthRoute');
 const Admin_Product_Router = require('./Routes/Admin/ProductsRoutes');
+const Shop_Product_Router = require('./Routes/Shop/Product_routes');
 
 // Connect to MongoDB using the URI stored in the .env file
 mongoose
@@ -40,6 +41,7 @@ app.use(express.json());
 
 app.use('/api/auth' , auth_router);
 app.use('/api/admin/products' , Admin_Product_Router);
+app.use('/api/shop/products' , Shop_Product_Router);
 
 
 

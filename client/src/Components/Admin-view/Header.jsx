@@ -2,13 +2,15 @@ import React from 'react'
 import { Button } from '../ui/button'
 import { AlignJustify, LogOut } from 'lucide-react'
 import { useDispatch } from 'react-redux'
-import { loginUser } from '@/Store/AuthSlice'
+import { loginUser, logoutUser } from '@/Store/AuthSlice'
 function AdminHeader({setOpen}) {
   const dispatch =useDispatch()
 
   const handleLogout = async function()
   {
-    //  dispatch(logout)
+     dispatch(logoutUser()).then(data , ()=>{
+      
+     })
   }
   return (
     <header className="flex items-center justify-between px-4 py-3 bg-background border-b">
