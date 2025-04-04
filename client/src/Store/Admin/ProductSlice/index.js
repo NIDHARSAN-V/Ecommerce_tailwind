@@ -1,3 +1,6 @@
+
+//admin Product slice
+
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
