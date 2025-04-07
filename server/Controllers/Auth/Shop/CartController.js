@@ -3,6 +3,8 @@ const AddtoCart = async function(req,res)
 {
        try {
         
+           //adding cart add controller 
+
        } catch (error) {
         console.log(error)
         res.status(500).json({
