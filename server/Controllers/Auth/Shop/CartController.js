@@ -69,6 +69,7 @@ const FetchCartItems = async function (req, res) {
   try {
 
     const { userId } = req.params;
+    console.log(userId)
 
     if (!userId) {
       return res.status(400).json({
@@ -77,10 +78,11 @@ const FetchCartItems = async function (req, res) {
       })
     }
 
-    const cart = await Cart.findOne(userId).populate({
-      path: 'item.productId',
+    const cart = await Cart.findOne({ userId }).populate({
+      path: 'items.productId',
       select: 'image title price salePrice'
     })
+    
 
     if (!cart) {
       return res.status(400).json({
@@ -104,7 +106,7 @@ const FetchCartItems = async function (req, res) {
       productId: item.productId._id,
       image: item.productId.image,
       title: item.productId.title,
-      price: item.productItem.price,
+      price: item.productId.price,
       salesPrice: item.productId.salePrice,
       quantity: item.quantity
     }))

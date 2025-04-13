@@ -4,6 +4,7 @@ import ProductDetailsDialog from '@/Components/Shopping-view/ProductDetails'
 import { Button } from '@/Components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/Components/ui/dropdown-menu'
 import { sortOptions } from '@/config'
+import { addToCart, fetchCartItems } from '@/Store/Shop/CartSlice'
 import { fetchAllFilteredProduct, fetchProductDetails } from '@/Store/Shop/ProductsSlice'
 import { ArrowUpDownIcon } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
@@ -45,6 +46,14 @@ function createSearchParamsHelper(filtersparams)
 
 
   const {productList , productDetails} = useSelector(state=>state.shopproducts)
+
+
+  const {user} = useSelector(state=>state.auth)
+
+const {CartItems }= useSelector(state=>state.shopcart)
+  
+
+console.log(CartItems , "cartItems")
 
   const[filters , setFilters ] = useState({})
 
@@ -131,7 +140,17 @@ useEffect(()=>{
     }
 },[productDetails])
 
-
+const handleAddtoCart = function(getCurrentProductId)
+{
+  dispatch(addToCart({userId : user.id , productId : getCurrentProductId , quantity:1})).then(data => {
+   if(data.payload.success)
+   {
+    dispatch(fetchCartItems({userId:user.id})).then(data =>{
+      console.log(data)
+    })
+   }
+  })
+}
 
 const handleGetProductDetails = function(getCurrentProductId)
 {
@@ -141,7 +160,7 @@ const handleGetProductDetails = function(getCurrentProductId)
 }
 
 
-console.log(productList , "ProductList")
+// console.log(productList , "ProductList")
        useEffect(()=>{
         if(filters!==null && sort!==null)
             dispatch(fetchAllFilteredProduct({filterParams:filters ,sortParams:sort }))
@@ -196,7 +215,8 @@ console.log(productList , "ProductList")
         {productList?.data?.length > 0 ? 
     productList.data.map((ProductItem) => (
         <ShoppingProductTile product={ProductItem} key={ProductItem._id}
-        handleGetProductDetails={handleGetProductDetails}/>
+        handleGetProductDetails={handleGetProductDetails}
+        handleAddtoCart={handleAddtoCart}/>
     )) 
     : null
 }

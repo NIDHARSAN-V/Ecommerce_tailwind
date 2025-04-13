@@ -4,7 +4,7 @@ import { Card,CardContent, CardFooter } from '../ui/card'
 import { Button } from '../ui/button'
 import { BrandMap, CategoryMap } from '@/config'
 
-function ShoppingProductTile({product , handleGetProductDetails}) {
+function ShoppingProductTile({product , handleGetProductDetails , handleAddtoCart}) {
   return (
 
 
@@ -47,11 +47,11 @@ function ShoppingProductTile({product , handleGetProductDetails}) {
 
           </div>
         </CardContent>
+        </div>
+        </div>
 <CardFooter>
-   <Button className=''>Add to Cart</Button>
+   <Button className='w-full' onClick={()=>handleAddtoCart(product._id)}>Add to Cart</Button>
 </CardFooter>
-        </div>
-        </div>
 
 
 
