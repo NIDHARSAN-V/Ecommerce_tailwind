@@ -136,61 +136,60 @@ const FetchCartItems = async function (req, res) {
 
 
 
-
 const UpdateCartItemsQuantity = async function (req, res) {
   try {
-
     const { userId, productId, quantity } = req.body;
 
     if (!userId || !productId || quantity <= 0) {
       return res.status(400).json({
         success: false,
-        message: " Invalid Data Provided!"
-      })
+        message: "Invalid Data Provided!"
+      });
     }
 
-    const cart = Cart.findOne({ userId })
+    // ✅ Await cart fetch
+    const cart = await Cart.findOne({ userId });
 
     if (!cart) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
-        message: "Cart is not present "
-      })
+        message: "Cart is not present"
+      });
     }
 
-    const findCurrentProduct = cart.items.findIndex(item => item.productId.toString() === productId)
+    // ✅ Find item index
+    const findCurrentProduct = cart.items.findIndex(
+      item => item.productId.toString() === productId
+    );
 
     if (findCurrentProduct === -1) {
-
       return res.status(404).json({
         success: false,
         message: "Cart item is not present"
-      })
-
+      });
     }
 
+    // ✅ Update quantity
+    cart.items[findCurrentProduct].quantity = quantity;
 
-    cart.items[findCurrentProduct].quantity = quantity
-
+    // ✅ Save cart
     await cart.save();
 
+    // ✅ Re-populate product details
     await cart.populate({
       path: 'items.productId',
       select: "image title price salePrice"
-    })
+    });
 
-
-
-
+    // ✅ Prepare response
     const populateCartItems = cart.items.map(item => ({
-      productId: item.productId ? item.productId._id : null,
-      image: item.image ? item.productId.image : null,
-      title: item.title ? item.productId.title : null,
-      price: item.price ? item.productId.price : null,
-      salePrice: item.salePrice ? item.productId.salePrice : null,
+      productId: item.productId?._id || null,
+      image: item.productId?.image || null,
+      title: item.productId?.title || null,
+      price: item.productId?.price || null,
+      salePrice: item.productId?.salePrice || null,
       quantity: item.quantity
     }));
-
 
     return res.status(200).json({
       success: true,
@@ -198,93 +197,85 @@ const UpdateCartItemsQuantity = async function (req, res) {
         ...cart._doc,
         items: populateCartItems
       }
-
-    })
-
+    });
 
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({
       success: false,
-      message: "Eroor in Update to Cart"
-    })
+      message: "Error in Updating Cart"
+    });
   }
-
-}
-
-
-
+};
 
 
 
 const DeleteCartItem = async function (req, res) {
   try {
-
-
-    const { userId, productId } = req.params
+    const { userId, productId } = req.params;
+    console.log(userId, productId, "userid and productId in delete cart");
 
     if (!userId || !productId) {
       return res.status(400).json({
         success: false,
-        message: " Invalid Data Provided!"
-      })
+        message: "Invalid Data Provided!"
+      });
     }
 
-
-    const cart = Cart.findOne({ userId }).populate({
+    // ✅ Await the cart fetch
+    const cart = await Cart.findOne({ userId }).populate({
       path: 'items.productId',
       select: "image title price salePrice"
-    })
+    });
+
     if (!cart) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
-        message: "Cart is not present "
-      })
+        message: "Cart is not present"
+      });
     }
 
+    // ✅ Remove the item (not keep it)
+    cart.items = cart.items.filter(item =>
+      item.productId?._id.toString() !== productId
+    );
 
-    cart.items = cart.items.filter(item => item.productId._id.toString() === productId)
-
-
+    // ✅ Save updated cart
     await cart.save();
 
-
-    await Cart.populate({
+    // ✅ Re-populate items
+    await cart.populate({
       path: 'items.productId',
       select: "image title price salePrice"
-    })
+    });
 
-
+    // ✅ Format cart items
     const populateCartItems = cart.items.map(item => ({
-      productId: item.productId ? item.productId._id : null,
-      image: item.productId ? item.productId.image : null,
-      title: item.productId ? item.productId.title : null,
-      price: item.productId ? item.productId.price : null,
-      salesPrice: item.productId ? item.productId.salePrice : null,
+      productId: item.productId?._id || null,
+      image: item.productId?.image || null,
+      title: item.productId?.title || null,
+      price: item.productId?.price || null,
+      salesPrice: item.productId?.salePrice || null,
       quantity: item.quantity
     }));
 
-
+    // ✅ Return response
     return res.status(200).json({
       success: true,
       data: {
         ...cart._doc,
         items: populateCartItems
       }
-
-    })
-
-
+    });
 
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({
       success: false,
-      message: "Eroor in Add to Cart"
-    })
+      message: "Error in Delete from Cart"
+    });
   }
-
-}
+};
 
 
 module.exports = { AddtoCart, FetchCartItems, UpdateCartItemsQuantity, DeleteCartItem }

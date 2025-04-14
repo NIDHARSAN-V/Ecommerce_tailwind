@@ -5,12 +5,48 @@ import { Separator } from "../ui/separator";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { StarIcon } from "lucide-react";
 import { Input } from "../ui/input";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, fetchCartItems } from "@/Store/Shop/CartSlice";
+import { toast } from "sonner";
+import { setProductDetails } from "@/Store/Shop/ProductsSlice";
 
 function ProductDetailsDialog({ open, setOpen, productDetails }) {
+
+
+
+const {user} = useSelector(state=>state.auth)
+const dispatch = useDispatch()
+
   if (!productDetails) return null; // Prevents errors if productDetails is undefined
 
+  const handleAddtoCart = function(getCurrentProductId)
+  {
+    dispatch(addToCart({userId : user.id , productId : getCurrentProductId , quantity:1})).then(data => {
+     if(data.payload.success)
+     {
+      
+      
+      toast.success("Product Added to Cart")
+       
+       dispatch(fetchCartItems({userId:user.id})).then(data =>{
+        console.log(data)
+      })
+     }
+    })
+  }
+  
+
+function handleDialogClose()
+{
+   setOpen(false)
+   dispatch(setProductDetails())
+}
+
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={()=>{
+      handleDialogClose()
+    }}>
       <DialogContent className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:p-12 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
         {/* Product Image Section */}
         <div className="relative overflow-hidden rounded-lg">
@@ -48,7 +84,10 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
 
           {/* Add to Cart Button */}
           <div>
-            <Button className="w-full mt-4">Add to Cart</Button>
+            <Button className="w-full mt-4"
+            onClick={()=>{
+              handleAddtoCart(productDetails._id)
+            }}>Add to Cart</Button>
           </div>
 
           {/* Separator */}

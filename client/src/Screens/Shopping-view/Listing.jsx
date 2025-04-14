@@ -10,6 +10,7 @@ import { ArrowUpDownIcon } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
+import { toast } from 'sonner'
 
 
 
@@ -47,13 +48,14 @@ function createSearchParamsHelper(filtersparams)
 
   const {productList , productDetails} = useSelector(state=>state.shopproducts)
 
-
   const {user} = useSelector(state=>state.auth)
 
-const {CartItems }= useSelector(state=>state.shopcart)
+ const {cartItems} = useSelector(state => state.shopcart)
+
+// const {CartItems }= useSelector(state=>state.shopcart.items)
   
 
-console.log(CartItems , "cartItems")
+console.log(cartItems , "cartItemssss")
 
   const[filters , setFilters ] = useState({})
 
@@ -145,7 +147,11 @@ const handleAddtoCart = function(getCurrentProductId)
   dispatch(addToCart({userId : user.id , productId : getCurrentProductId , quantity:1})).then(data => {
    if(data.payload.success)
    {
-    dispatch(fetchCartItems({userId:user.id})).then(data =>{
+    
+    
+    toast.success("Product Added to Cart")
+     
+     dispatch(fetchCartItems({userId:user.id})).then(data =>{
       console.log(data)
     })
    }

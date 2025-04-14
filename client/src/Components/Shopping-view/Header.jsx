@@ -1,5 +1,5 @@
 import { HousePlug, LogOut, Menu, ShoppingCart, UserCog } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
 import { Button } from '../ui/button';
@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback } from '../ui/avatar';
 import { DropdownMenuLabel } from '@radix-ui/react-dropdown-menu';
 import { logoutUser } from '@/Store/AuthSlice';
 import UserCartWrapper from './Cart_Wrapper';
+import { fetchCartItems } from '@/Store/Shop/CartSlice';
 
 
 
@@ -38,6 +39,8 @@ function HeaderRightContent()
   const navigate = useNavigate()
 
   const dispatch = useDispatch()
+
+const {cartItems} = useSelector(state=>state.shopcart)
   
 
   const[openCartSheet , setOpenCartSheet]= useState(false)
@@ -46,6 +49,14 @@ function HeaderRightContent()
   {
      dispatch(logoutUser());
   }
+
+
+
+  useEffect(()=>
+{
+  dispatch(fetchCartItems({userId:user.id}))
+},[dispatch])
+
   
   return <div className="flex lg:items-center 
    flex-row gap-4">
@@ -66,7 +77,7 @@ function HeaderRightContent()
        <span className='sr-only'>User Cart</span>
     </Button>
 
-    <UserCartWrapper/>
+    <UserCartWrapper cartItems={cartItems.items}/>
 
      </Sheet>
 
