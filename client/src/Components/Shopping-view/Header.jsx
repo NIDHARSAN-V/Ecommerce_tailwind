@@ -14,17 +14,39 @@ import { DropdownMenuLabel } from '@radix-ui/react-dropdown-menu';
 import { logoutUser } from '@/Store/AuthSlice';
 import UserCartWrapper from './Cart_Wrapper';
 import { fetchCartItems } from '@/Store/Shop/CartSlice';
-
+import { Label } from '../ui/label';
 
 
 
 function MenuItems() {
+  const navigate = useNavigate();
+
+  function handleNavigateToListingPage(item) {
+    sessionStorage.removeItem('filters');
+
+    const currentFilter =
+      item.id !== 'home'
+        ? {
+            category: [item.id], // replace 'category' with the correct section key if needed
+          }
+        : null;
+
+    sessionStorage.setItem('filters', JSON.stringify(currentFilter));
+    navigate('/shop/listing');
+  }
+
   return (
-    <nav className="flex flex-col mb-4 lg:mb-3 lg:items-center lg:gap-6 lg:flex-row ">
+    <nav className="flex flex-col mb-4 lg:mb-3 lg:items-center lg:gap-6 lg:flex-row">
       {shoppingViewHeaderMenuItems.map((item) => (
-        <Link key={item.id} to={item.path} className="text-sm font-medium">
+        <Label
+          key={item.id}
+          className="text-sm font-medium cursor-pointer"
+          onClick={() => {
+            handleNavigateToListingPage(item);
+          }}
+        >
           {item.label}
-        </Link>
+        </Label>
       ))}
     </nav>
   );
@@ -131,8 +153,6 @@ const {cartItems} = useSelector(state=>state.shopcart)
                Logout
 
             </DropdownMenuItem>
-
-            
 
         </DropdownMenuContent>
        </DropdownMenu>

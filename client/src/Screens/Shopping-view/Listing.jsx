@@ -163,7 +163,7 @@ const handleGetProductDetails = function(getCurrentProductId)
     // console.log(getCurrentProductId)
 
     dispatch(fetchProductDetails(getCurrentProductId))
-}
+} 
 
 
 // console.log(productList , "ProductList")

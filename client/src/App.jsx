@@ -31,6 +31,7 @@ function App() {
 useEffect(function()
 {
     dispatch(checkAuth());
+    console.log("Is Auth Check")
 },[dispatch])
  
 

@@ -7,12 +7,15 @@ import shopProductSlice from "./Shop/ProductsSlice/index.js"
 
 import shopCartSlice from "./Shop/CartSlice/index.js"
 
+import shopAddressSlice from "./Shop/AddressSlice/index.js"
+
 const store = configureStore({
     reducer: {
         auth: authReducer,
         adminproducts : adminProductSlice,
         shopproducts : shopProductSlice,
-        shopcart : shopCartSlice
+        shopcart : shopCartSlice,
+        shopaddress : shopAddressSlice
         
     },
 });

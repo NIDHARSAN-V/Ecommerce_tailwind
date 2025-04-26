@@ -19,10 +19,34 @@ import {
   TrophyIcon,
 } from 'lucide-react'
 import { Card, CardContent } from '@/Components/ui/card'
+import { unstable_useEnhancedEffect } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchAllFilteredProduct, fetchProductDetails } from '@/Store/Shop/ProductsSlice'
+import ShoppingProductTile from '@/Components/Shopping-view/Product_Tile'
+import { useNavigate } from 'react-router-dom'
+import { addToCart, fetchCartItems } from '@/Store/Shop/CartSlice'
+import { toast } from 'sonner'
+import ProductDetailsDialog from '@/Components/Shopping-view/ProductDetails'
 
 function ShoppingHome() {
   const slides = [bannerOne, bannerTwo, bannerThree]
   const [currentSlide, setCurrentSlide] = useState(0)
+  const dispatch = useDispatch()
+  const {productList , productDetails} = useSelector(state => state.shopproducts)
+  const {user} = useSelector(state => state.auth)
+
+  const [opendetailDia , setOpenDetailsDia] = useState(false)
+  
+  useEffect(()=>{
+      if(productDetails !== null )
+      {
+        setOpenDetailsDia(true)
+      }
+  },[productDetails])
+  
+
+  const navigate  = useNavigate();
+
 
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1))
@@ -40,6 +64,37 @@ function ShoppingHome() {
     return () => clearInterval(timer);
   }, [slides.length]);
 
+
+
+   useEffect(()=>{
+    dispatch(fetchAllFilteredProduct({filterParams : {} , sortParams:'price-lowtohigh'}))
+   },[dispatch])
+
+
+   console.log("ProductList in Home" , productList)
+
+
+
+
+
+   const handleAddtoCart = function(getCurrentProductId)
+{
+  dispatch(addToCart({userId : user.id , productId : getCurrentProductId , quantity:1})).then(data => {
+   if(data.payload.success)
+   {
+    
+    
+    toast.success("Product Added to Cart")
+     
+     dispatch(fetchCartItems({userId:user.id})).then(data =>{
+      console.log(data)
+    })
+   }
+  })
+}
+
+
+
   const category = [
     { id: "men", label: "Men", icon: ShirtIcon },
     { id: "women", label: "Women", icon: CloudLightningIcon },
@@ -56,6 +111,32 @@ function ShoppingHome() {
     { id: "zara", label: "Zara", icon: SparklesIcon },
     { id: "h&m", label: "H&M", icon: StarIcon },
   ]
+
+
+
+
+  function handleNavigateToListingPage(item , section){
+         sessionStorage.removeItem('filters');
+         const currentFilter = {
+          [section]:[item.id]
+         }
+         sessionStorage.setItem('filters' , JSON.stringify(currentFilter))
+         navigate('/shop/listing')
+
+  }
+
+
+
+
+  const handleGetProductDetails = function(getCurrentProductId)
+  {
+      // console.log(getCurrentProductId , "In home Page")
+  
+      dispatch(fetchProductDetails(getCurrentProductId))
+  } 
+
+
+
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -89,7 +170,13 @@ function ShoppingHome() {
         </Button>
       </div>
 
+
+
       {/* Rest of your component remains the same */}
+
+
+
+
       {/* Category Section */}
       <section className="py-12 bg-gray-50 mb-5">
         <div className="container mx-auto px-4">
@@ -97,6 +184,7 @@ function ShoppingHome() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
             {category.map((item) => (
               <Card
+              onClick={()=>handleNavigateToListingPage(item , 'category')}
                 key={item.id}
                 className="cursor-pointer transition-all duration-300 ease-in-out border border-gray-200 rotate-[2deg] hover:rotate-0 hover:border-2 hover:shadow-[0_0_15px_rgba(0,0,0,0.2)] hover:ring-2 hover:ring-primary/60 hover:scale-105"
               >
@@ -110,6 +198,9 @@ function ShoppingHome() {
         </div>
       </section>
 
+
+
+
       {/* Brand Section */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
@@ -117,6 +208,8 @@ function ShoppingHome() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
             {brand.map((item) => (
               <Card
+
+              onClick={()=>handleNavigateToListingPage(item , 'brand')}
                 key={item.id}
                 className="cursor-pointer transition-all duration-300 ease-in-out border border-gray-200 rotate-[2deg] hover:rotate-0 hover:border-2 hover:shadow-[0_0_15px_rgba(0,0,0,0.2)] hover:ring-2 hover:ring-primary/60 hover:scale-105"
               >
@@ -129,6 +222,35 @@ function ShoppingHome() {
           </div>
         </div>
       </section>
+
+
+
+
+
+     {/* Featured Products */}
+
+
+     <section className="py-12">
+      <div className="container mx-auto px-4">
+        <h2 className="text-3xl font-bold text-center mb-8">
+          Feature Products
+        </h2>
+
+        <div className="grid grid-col-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+          {productList.data && productList.data.length>0 ?
+          productList.data.map(item => <ShoppingProductTile 
+           key={item._id}
+            product={item} handleGetProductDetails= {handleGetProductDetails}
+            handleAddtoCart={handleAddtoCart}></ShoppingProductTile>)
+          :null}
+
+        </div>
+      </div>
+     </section>
+      <ProductDetailsDialog open={opendetailDia} setOpen={setOpenDetailsDia} productDetails={productDetails}/>
+    
+      
     </div>
   )
 }
