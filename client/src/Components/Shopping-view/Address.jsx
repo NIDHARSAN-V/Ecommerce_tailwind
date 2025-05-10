@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader ,CardTitle} from '../ui/card'
 import CommonForm from '../Common/form'
 import { addressFormControls } from '@/config'
 import { useDispatch, useSelector } from 'react-redux'
-import { addNewAddress, fetchAllAddress } from '@/Store/Shop/AddressSlice'
+import { addNewAddress, deleteAddress, fetchAllAddress } from '@/Store/Shop/AddressSlice'
+import AddressCard from './AddressCard'
 
 function Address() {
 
@@ -53,12 +54,41 @@ function Address() {
     }
 
 
+    console.log(addressList , "Address List")
+
  
+
+
+    function handleDeleteAddress(getCurrentAddress)
+    {
+         dispatch(deleteAddress({userId : user.id , addressId : getCurrentAddress._id})).then(data=>{
+            if(data.payload.succss)
+            {
+                dispatch(fetchAllAddress(user.id))
+            }
+
+                
+         })
+    }
+
+
+    function handleEditAddress()
+    {
+
+    }
 
   return (
    <Card>
-        <div className='p-5'>
-            
+        <div className='mb-5 p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 '>
+           {
+    addressList && addressList.length > 0 ? (
+        addressList.map(AddressItem => <AddressCard addressInfo={AddressItem} handleDeleteAddress={handleDeleteAddress} handleEditAddress={handleEditAddress}/>)
+    ) : (
+        "n"
+    )
+}
+
+             
         </div>
         <CardHeader>
              <CardTitle>
