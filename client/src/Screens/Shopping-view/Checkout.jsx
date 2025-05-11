@@ -57,6 +57,8 @@ function ShoppingCheckout() {
           <div className='mt-4 w-full'>
             <Button className='w-full'>Checkout with Paypal</Button>
           </div>
+
+          
         </div>
 
 

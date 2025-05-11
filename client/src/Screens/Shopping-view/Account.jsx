@@ -3,6 +3,7 @@ import accImg from '../../assets/account.jpg';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
 import Orders from '@/Components/Shopping-view/Orders';
 import Address from '@/Components/Shopping-view/Address';
+import ShoppingOrders from '@/Components/Shopping-view/Orders';
 
 function ShoppingAccount() {
   return (
@@ -31,7 +32,7 @@ function ShoppingAccount() {
             </TabsList>
 
             <TabsContent value="orders">
-                   <Orders/>
+                   <ShoppingOrders/>
             </TabsContent>
 
 
