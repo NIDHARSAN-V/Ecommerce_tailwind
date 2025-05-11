@@ -99,7 +99,8 @@ const {cartItems} = useSelector(state=>state.shopcart)
        <span className='sr-only'>User Cart</span>
     </Button>
 
-    <UserCartWrapper cartItems={cartItems.items}/>
+    <UserCartWrapper cartItems={cartItems.items}
+   setOpenCartSheet={setOpenCartSheet}/>
 
      </Sheet>
 

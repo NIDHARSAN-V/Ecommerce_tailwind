@@ -90,10 +90,14 @@ const fetchAllAddress = async function(req,res)
 const editAddress = async function(req,res)
 {
      try {
+          console.log("In edit Address")
 
 
         const {userId , addressId} = req.params;
-        const {formData} = req.body;
+        const formData = req.body;
+        console.log(formData)
+
+      
 
         if(!userId || !addressId)
         {
@@ -115,6 +119,9 @@ const editAddress = async function(req,res)
            })
 
         }
+
+
+        console.log(address)
 
 
         res.status(200).json({
