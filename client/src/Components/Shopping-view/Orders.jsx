@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { Table, TableHead, TableHeader, TableRow } from '../ui/table'
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '../ui/table'
 
 function ShoppingOrders() {
   return (
@@ -27,9 +27,23 @@ function ShoppingOrders() {
                <TableHead>
                 Order Price
                </TableHead>
+               <TableHead>
+                 <span className='sr-only'>Details</span>
+               </TableHead>
             </TableRow>
 
           </TableHeader>
+
+          <TableBody>
+            <TableRow>
+
+
+                
+
+
+
+            </TableRow>
+          </TableBody>
         </Table>
       </CardContent>
     </Card>
